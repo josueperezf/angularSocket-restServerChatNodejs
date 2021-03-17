@@ -38,13 +38,15 @@ export default class Server {
         console.log('escuchando conexiones');
         this.io.on('connect', cliente=>{
             // Conectar cliente
-            miSocket.conectarCliente(cliente);
+            miSocket.conectarCliente(cliente );
             
             miSocket.configurarUsuario(cliente , this.io );
             // console.log('cliente conectado');
             // console.log('cliente conectado: '+ cliente.id);
             miSocket.mensaje(cliente, this.io);
-            miSocket.desconectar(cliente);
+            //evento que escucha cuando un frontend en especifico me pregunta quienes estan conectados
+            miSocket.obtenerUsuarios(cliente, this.io);
+            miSocket.desconectar(cliente, this.io);
         });
 
         

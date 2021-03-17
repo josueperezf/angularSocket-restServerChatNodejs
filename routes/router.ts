@@ -1,6 +1,7 @@
 
 import { Router, Request, Response } from 'express';
 import Server from '../classes/server';
+import { usuariosConectados } from '../sockets/socket';
 
 const router = Router();
 
@@ -60,7 +61,38 @@ router.post('/mensajes/:id', ( req: Request, res: Response  ) => {
 
 });
 
+// para saber todos los usuarios que estan conectados esto es para una api rest, para enpoint, no socket
+router.get('/usuarios', ( req: Request, res: Response  ) => {
+    // al llamanar a la clase server el y el metodo instance, nos esta retornando la misma instancia de la clase
+    const server = Server.instance;
+    server.io.allSockets().then((clientes)=>{
+        res.json({
+            ok:true,
+           // clientes
+            clientes: Array.from(clientes)
+        });
+    }).catch((err)=>{
+        res.json({
+            ok:false,
+            err
+        })
+    });
 
+});
+
+
+// obtener usuarios y sus nombres
+
+router.get('/usuarios/detalle', ( req: Request, res: Response  ) => {
+    // usuariosConectados --> en el archivo socket creamos export una nueva instancia de la clase usuario lista, usaremos esa misma clase para obtener el nombre del usuario, la sala y demas
+    // para mi gusto si estuvieramos trabajando con token, esto no seria necesario
+    usuariosConectados.getLista();
+    res.json({
+        ok:true,
+        clientes: usuariosConectados.getLista()
+    })
+    
+});
 
 export default router;
 
